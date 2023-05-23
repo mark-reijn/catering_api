@@ -12,6 +12,13 @@ use Exception;
 class FacilityController extends BaseController {
 
     public function getFacilities() {
+        $entityBody = file_get_contents('php://input');
+        if ($entityBody) {
+            $filterData = json_decode($entityBody, true);
+            $this->getFacilitiesByFilter($filterData);
+            die;
+        }
+
         $facilityQuery = "SELECT * FROM Facility";
         $results = $this->db->fetchQuery($facilityQuery);
 
@@ -20,14 +27,7 @@ class FacilityController extends BaseController {
             die;
         }
 
-        for ($i = 0; $i < count($results); $i++) {
-            $facility = $results[$i];
-
-            $tagQuery = "SELECT tag FROM facilitytag WHERE facility = ?";
-            $tagQueryResult = $this->db->fetchQuery($tagQuery, [$facility['name']]);
-            $facility['tags'] = $tagQueryResult;
-            $results[$i] = $facility;
-        }
+        $results = $this->getTagsForFacilities($results);
 
         (new Status\Ok($results))->send();
     }
@@ -133,6 +133,22 @@ class FacilityController extends BaseController {
         (new Status\Ok())->send();
     }
 
+    private function getFacilitiesByFilter($filterData) {
+        $name = array_key_exists('name', $filterData) ? $filterData['name'] : '';
+        $location = array_key_exists('location', $filterData) ? $filterData['location'] : '';
+        $tag = array_key_exists('tag', $filterData) ? $filterData['tag'] : '';
+
+        $filterQuery = "SELECT DISTINCT F.name, F.creation_date, F.location FROM facility AS F INNER JOIN facilitytag AS FT on F.name = FT.facility WHERE F.name LIKE ? AND F.location LIKE ? AND FT.tag LIKE ?;";
+        $filterQueryResult = $this->db->fetchQuery($filterQuery, [
+            "%".$name."%",
+            "%".$location."%",
+            "%".$tag."%"
+            ]);
+
+        $filterQueryResult = $this->getTagsForFacilities($filterQueryResult);
+        (new Status\Ok($filterQueryResult))->send();
+    }
+
     private function createTagsFromFacility($tags, $facilityName) : bool {
         foreach ($tags as $tag) {
             if (!array_key_exists('tag', $tag)) {
@@ -156,5 +172,18 @@ class FacilityController extends BaseController {
         }
 
         return true;
+    }
+
+    private function getTagsForFacilities($facilities) : array {
+        for ($i = 0; $i < count($facilities); $i++) {
+            $facility = $facilities[$i];
+
+            $tagQuery = "SELECT tag FROM facilitytag WHERE facility = ?";
+            $tagQueryResult = $this->db->fetchQuery($tagQuery, [$facility['name']]);
+            $facility['tags'] = $tagQueryResult;
+            $facilities[$i] = $facility;
+        }
+
+        return $facilities;
     }
 }
