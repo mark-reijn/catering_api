@@ -96,12 +96,11 @@ class FacilityController extends BaseController {
         $updateQuery = "UPDATE facility SET name = ?, creation_date = ?, location = ? WHERE name = ?";
 
         try {
-            $updateQueryResult =  $this->db->executeQuery($updateQuery, [$name, $creationDate, $location, $name]);
+            $updateQueryResult = $this->db->executeQuery($updateQuery, [$name, $creationDate, $location, $name]);
         } catch (Exception $e) {
             (new Status\InternalServerError($e))->send();
             die;
         }
-
 
         if (!$updateQueryResult) {
             (new Status\InternalServerError("Something went wrong while trying to update the facility."))->send();
@@ -120,6 +119,18 @@ class FacilityController extends BaseController {
         }
 
         (new Status\Ok($facility))->send();
+    }
+
+    public function deleteFacility($facilityName) {
+        $deleteQuery = "DELETE FROM facility WHERE name = ?";
+        $deleteQueryResult = $this->db->executeQuery($deleteQuery, [$facilityName]);
+
+        if (!$deleteQueryResult) {
+            (new Status\InternalServerError("Something went wrong while trying to delete the facility."))->send();
+            die;
+        }
+
+        (new Status\Ok())->send();
     }
 
     private function createTagsFromFacility($tags, $facilityName) : bool {
