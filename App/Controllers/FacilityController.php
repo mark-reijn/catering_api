@@ -46,4 +46,61 @@ class FacilityController extends BaseController {
 
         (new Status\Ok($facility))->send();
     }
+
+    public function createFacility() {
+        $entityBody = file_get_contents('php://input');
+        $facility = json_decode($entityBody, true);
+
+        $name = $facility['name'];
+        $creationDate = $facility['creation_date'];
+        $location = $facility['location'];
+
+        if ($name == null || $creationDate == null || $location == null) {
+            (new Status\NoContent("Not all fields are provided."))->send();
+            die;
+        }
+
+        $createQuery = "INSERT INTO facility (name, creation_date, location) VALUES (?, ?, ?)";
+        $createQueryResult = $this->db->executeQuery($createQuery, [$name, $creationDate, $location]);
+
+        if (array_key_exists('tags', $facility)) {
+            $tagsToDatabase = $this->createTagsFromFacility($facility['tags'], $name);
+
+            if (!$tagsToDatabase) {
+                (new Status\InternalServerError("Something went wrong while trying to save the tags."))->send();
+            }
+        }
+
+        if (!$createQueryResult) {
+            (new Status\InternalServerError("Something went wrong while trying to save the facility."))->send();
+        }
+
+        (new Status\Ok($facility))->send();
+    }
+
+    private function createTagsFromFacility($tags, $facilityName) : bool {
+        foreach ($tags as $tag) {
+            if (!array_key_exists('tag', $tag)) {
+                return false;
+            }
+
+            $tagQuery = "INSERT INTO tag (name) VALUES (?) ON DUPLICATE KEY UPDATE name=name";
+
+            $createTagQueryResult = $this->db->executeQuery($tagQuery, [$tag['tag']]);
+
+            if (!$createTagQueryResult) {
+                echo "jajajaaj";
+                return false;
+            }
+
+            $tagFacQuery = "INSERT INTO facilityTag (facility, tag) VALUES (?, ?)";
+            $tagFacQueryResult = $this->db->executeQuery($tagFacQuery, [$facilityName, $tag['tag']]);
+
+            if (!$tagFacQueryResult) {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
