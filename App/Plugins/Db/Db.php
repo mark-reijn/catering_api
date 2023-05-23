@@ -55,6 +55,22 @@ class Db implements IDb {
         return $this->stmt->execute();
     }
 
+    public function fetchQuery(string $query, array $bind = []): array
+    {
+        $this->stmt = $this->connection->prepare($query);
+        $success = false;
+        if ($bind) {
+            $success = $this->stmt->execute($bind);
+        }
+        $success = $this->stmt->execute();
+
+        if ($success) {
+            return $this->stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+
+        return [];
+    }
+
     /**
      * Function to get last inserted id
      * @param mixed $name
