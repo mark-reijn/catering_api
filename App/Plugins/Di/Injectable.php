@@ -27,7 +27,7 @@ abstract class Injectable {
 
         if (true === $bucket->hasShared($propertyName)) {
             $service = $bucket->getShared($propertyName);
-            $this->$propertyName = $service;
+            #$this->$propertyName = $service;
 
             return $service;
         }
