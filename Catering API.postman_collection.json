@@ -1,0 +1,175 @@
+{
+	"info": {
+		"_postman_id": "afcee88f-8726-4d63-8638-7eda8c86589e",
+		"name": "Catering API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8717622"
+	},
+	"item": [
+		{
+			"name": "Base request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/catering_api/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"catering_api",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Test request",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/catering_api/test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"catering_api",
+						"test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all facilities",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/catering_api/facilities",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"catering_api",
+						"facilities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get facilities with filter",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"location\":\"Hoorn\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/catering_api/facilities",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"catering_api",
+						"facilities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create facility",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n        \"name\": \"Greathouse\",\r\n        \"creation_date\": \"2023-05-19\",\r\n        \"location\": \"Hoorn\",\r\n        \"tags\": [\r\n            {\r\n                \"tag\": \"Snack\"\r\n            },\r\n            {\r\n                \"tag\": \"Vegan\"\r\n            }\r\n        ]\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/catering_api/facilities",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"catering_api",
+						"facilities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update facility",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Greathouse\",\r\n    \"creation_date\": \"2023-04-19\",\r\n    \"location\": \"Hoorn\",\r\n    \"tags\": [\r\n        {\r\n            \"tag\": \"Snack\"\r\n        },\r\n        {\r\n            \"tag\": \"Vegan\"\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost/catering_api/facilities/GreatHouse",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"catering_api",
+						"facilities",
+						"GreatHouse"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete facility",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost/catering_api/facilities/Greathouse",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"path": [
+						"catering_api",
+						"facilities",
+						"Greathouse"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

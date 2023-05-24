@@ -116,6 +116,7 @@ class FacilityController extends BaseController {
 
         if ($facilityName != $name) {
             (new Status\BadRequest("Name of the facility does not match."))->send();
+            die;
         }
 
         $updateQuery = "UPDATE facility SET name = ?, creation_date = ?, location = ? WHERE name = ?";
