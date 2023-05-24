@@ -76,7 +76,13 @@ class FacilityController extends BaseController {
         }
 
         $createQuery = "INSERT INTO facility (name, creation_date, location) VALUES (?, ?, ?)";
-        $createQueryResult = $this->db->executeQuery($createQuery, [$name, $creationDate, $location]);
+
+        try {
+            $createQueryResult = $this->db->executeQuery($createQuery, [$name, $creationDate, $location]);
+        } catch (Exception $e) {
+            (new Status\InternalServerError($e))->send();
+            die;
+        }
 
         if (array_key_exists('tags', $facility)) {
             $tagsToDatabase = $this->createTagsFromFacility($facility['tags'], $name);
@@ -192,7 +198,12 @@ class FacilityController extends BaseController {
 
             $tagQuery = "INSERT INTO tag (name) VALUES (?) ON DUPLICATE KEY UPDATE name=name";
 
-            $createTagQueryResult = $this->db->executeQuery($tagQuery, [$tag['tag']]);
+            try {
+                $createTagQueryResult = $this->db->executeQuery($tagQuery, [$tag['tag']]);
+            } catch (Exception $e) {
+                (new Status\InternalServerError($e))->send();
+                die;
+            }
 
             if (!$createTagQueryResult) {
                 return false;
