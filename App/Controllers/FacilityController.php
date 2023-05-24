@@ -11,6 +11,11 @@ use Exception;
  */
 class FacilityController extends BaseController {
 
+    /**
+     * Getting all facilities, or facilities matching the filter options.
+     * Can filter on facility name, location and tag, this needs to be given as body in the HTTP request.
+     * @return void
+     */
     public function getFacilities() {
         $entityBody = file_get_contents('php://input');
         if ($entityBody) {
@@ -32,6 +37,11 @@ class FacilityController extends BaseController {
         (new Status\Ok($results))->send();
     }
 
+    /**
+     * Getting a facility by its name.
+     * @param $facilityName
+     * @return void
+     */
     public function getFacilityByName($facilityName) {
         $facilityQuery = "SELECT * FROM Facility WHERE name = ?";
         $facility = $this->db->fetchQuery($facilityQuery, [$facilityName]);
@@ -48,6 +58,10 @@ class FacilityController extends BaseController {
         (new Status\Ok($facility))->send();
     }
 
+    /**
+     * Creating a new facility.
+     * @return void
+     */
     public function createFacility() {
         $entityBody = file_get_contents('php://input');
         $facility = json_decode($entityBody, true);
@@ -81,6 +95,11 @@ class FacilityController extends BaseController {
         (new Status\Ok($facility))->send();
     }
 
+    /**
+     * Updating a facility.
+     * @param $facilityName
+     * @return void
+     */
     public function updateFacility($facilityName) {
         $entityBody = file_get_contents('php://input');
         $facility = json_decode($entityBody, true);
@@ -121,6 +140,11 @@ class FacilityController extends BaseController {
         (new Status\Ok($facility))->send();
     }
 
+    /**
+     * Deleting a facility by name.
+     * @param $facilityName
+     * @return void
+     */
     public function deleteFacility($facilityName) {
         $deleteQuery = "DELETE FROM facility WHERE name = ?";
         $deleteQueryResult = $this->db->executeQuery($deleteQuery, [$facilityName]);
@@ -133,6 +157,11 @@ class FacilityController extends BaseController {
         (new Status\Ok())->send();
     }
 
+    /**
+     * Getting facilities matching the filters.
+     * @param $filterData
+     * @return void
+     */
     private function getFacilitiesByFilter($filterData) {
         $name = array_key_exists('name', $filterData) ? $filterData['name'] : '';
         $location = array_key_exists('location', $filterData) ? $filterData['location'] : '';
@@ -149,6 +178,12 @@ class FacilityController extends BaseController {
         (new Status\Ok($filterQueryResult))->send();
     }
 
+    /**
+     * Creating tags for facilities
+     * @param $tags
+     * @param $facilityName
+     * @return bool
+     */
     private function createTagsFromFacility($tags, $facilityName) : bool {
         foreach ($tags as $tag) {
             if (!array_key_exists('tag', $tag)) {
@@ -174,6 +209,11 @@ class FacilityController extends BaseController {
         return true;
     }
 
+    /**
+     * Getting the tags for the facilities
+     * @param $facilities
+     * @return array
+     */
     private function getTagsForFacilities($facilities) : array {
         for ($i = 0; $i < count($facilities); $i++) {
             $facility = $facilities[$i];
